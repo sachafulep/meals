@@ -1,34 +1,29 @@
 import React from "react";
 import "./App.css";
 import Splash from "./widgets/splash";
+import SelectHousehold from "./widgets/selectHousehold";
 import CreateHousehold from "./widgets/createHousehold";
+import Home from "./widgets/home";
+import constants from "./helpers/constants";
 
-const screens = { splash: 1, createHousehold: 2 };
+const screens = constants.get("screens");
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentScreen: screens.splash,
+      currentHousehold: undefined,
     };
-
-    // db.collection("cool")
-    //   .doc("nice")
-    //   .set({
-    //     name: "yes",
-    //     state: "fdsa",
-    //     country: "fdsafdsafdsa",
-    //   })
-    //   .then(function () {
-    //     console.log("Document successfully written!");
-    //   })
-    //   .catch(function (error) {
-    //     console.error("Error writing document: ", error);
-    //   });
   }
 
   selectScreen(screen) {
     this.setState({ currentScreen: screen });
+  }
+
+  selectHousehold(household) {
+    this.setState({ currentHousehold: household });
+    this.selectScreen(screens.home);
   }
 
   render() {
@@ -42,10 +37,30 @@ class App extends React.Component {
           </div>
         );
 
+      case screens.selectHousehold:
+        return (
+          <div>
+            <SelectHousehold
+              selectScreenCallback={(screen) => this.selectScreen(screen)}
+            />
+          </div>
+        );
+
       case screens.createHousehold:
         return (
           <div>
-            <CreateHousehold />
+            <CreateHousehold
+              selectHouseholdCallback={(household) =>
+                this.selectHousehold(household)
+              }
+            />
+          </div>
+        );
+
+      case screens.home:
+        return (
+          <div>
+            <Home currentHousehold={this.state.currentHousehold} />
           </div>
         );
 

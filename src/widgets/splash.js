@@ -1,28 +1,52 @@
 import React from "react";
-const screens = { splash: 1, createHousehold: 2 };
+import * as firebaseui from "firebaseui";
+import firebase from "firebase/app";
+import "firebase/auth";
+
+import constants from "../helpers/constants";
+
+const screens = constants.get("screens");
 
 class Splash extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.setAuthentication(props.selectScreenCallback);
+  }
+
+  setAuthentication(selectScreenCallback) {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        selectScreenCallback(screens.selectHousehold);
+      } else {
+        this.ui =
+          firebaseui.auth.AuthUI.getInstance() ||
+          new firebaseui.auth.AuthUI(firebase.auth());
+
+        var uiConfig = {
+          callbacks: {
+            signInSuccessWithAuthResult: function () {
+              selectScreenCallback(screens.selectHousehold);
+            },
+            uiShown: function () {
+              document.getElementById("loader").style.display = "none";
+            },
+          },
+          signInFlow: "popup",
+          signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+        };
+
+        this.ui.start("#firebaseui-auth-container", uiConfig);
+      }
+    });
   }
 
   render() {
     return (
-      <div id="LoginDiv">
-        <input placeholder="Paste household ID here"></input>
-        <div>
-          {" "}
-          <button>Confirm</button>
-        </div>
-        <p>or</p>
-        <button
-          onClick={() =>
-            this.props.selectScreenCallback(screens.createHousehold)
-          }
-        >
-          Create new household
-        </button>
+      <div id="SplashDiv">
+        <h1>Meals</h1>
+        <div id="firebaseui-auth-container"></div>
+        <div id="loader">Loading...</div>
       </div>
     );
   }

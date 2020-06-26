@@ -1,4 +1,5 @@
 import React from "react";
+import Database from "../helpers/database";
 
 class CreateHousehold extends React.Component {
   constructor(props) {
@@ -8,11 +9,22 @@ class CreateHousehold extends React.Component {
 
   render() {
     return (
-      <div id="LoginDiv">
-        <input placeholder="Household name"></input>
+      <div id="CreateHouseholdDiv">
+        <input id="inputHouseholdName" placeholder="Household name"></input>
         <div>
-          {" "}
-          <button>Confirm</button>
+          <button
+            onClick={() => {
+              const input = document.getElementById("inputHouseholdName");
+              const name = input.value;
+              if (name.length > 0) {
+                Database.insertHousehold(name, (household) =>
+                  this.props.selectHouseholdCallback(household)
+                );
+              }
+            }}
+          >
+            Confirm
+          </button>
         </div>
       </div>
     );
