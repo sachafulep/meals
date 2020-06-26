@@ -42,6 +42,9 @@ class App extends React.Component {
           <div>
             <SelectHousehold
               selectScreenCallback={(screen) => this.selectScreen(screen)}
+              selectHouseholdCallback={(household) =>
+                this.selectHousehold(household)
+              }
             />
           </div>
         );

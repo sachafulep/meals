@@ -2,7 +2,7 @@ import React from "react";
 import * as firebaseui from "firebaseui";
 import firebase from "firebase/app";
 import "firebase/auth";
-
+import Database from "../helpers/database";
 import constants from "../helpers/constants";
 
 const screens = constants.get("screens");
@@ -11,13 +11,18 @@ class Splash extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+
     this.setAuthentication(props.selectScreenCallback);
   }
 
   setAuthentication(selectScreenCallback) {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
-        selectScreenCallback(screens.selectHousehold);
+        Database.login(
+          user.uid,
+          user.displayName,
+          () => selectScreenCallback(screens.selectHousehold)
+        );
       } else {
         this.ui =
           firebaseui.auth.AuthUI.getInstance() ||
@@ -26,7 +31,7 @@ class Splash extends React.Component {
         var uiConfig = {
           callbacks: {
             signInSuccessWithAuthResult: function () {
-              selectScreenCallback(screens.selectHousehold);
+              return false;
             },
             uiShown: function () {
               document.getElementById("loader").style.display = "none";

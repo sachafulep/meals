@@ -10,11 +10,11 @@ class CreateHousehold extends React.Component {
   render() {
     return (
       <div id="CreateHouseholdDiv">
-        <input id="inputHouseholdName" placeholder="Household name"></input>
+        <input id="InputCreateHousehold" placeholder="Household name"></input>
         <div>
           <button
             onClick={() => {
-              const input = document.getElementById("inputHouseholdName");
+              const input = document.getElementById("InputCreateHousehold");
               const name = input.value;
               if (name.length > 0) {
                 Database.insertHousehold(name, (household) =>

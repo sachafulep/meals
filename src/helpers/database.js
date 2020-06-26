@@ -3,32 +3,59 @@ import { v4 as uuid } from "uuid";
 import firebase from "firebase/app";
 
 class Database {
-  static insertHousehold(name, onSuccesCallback) {
-    const id = uuid();
+  static login(uuid, name, onSucces) {
+    db.collection("users")
+      .doc(uuid)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          onSucces();
+        } else {
+          const user = { uuid: uuid, name: name };
+          db.collection("users").doc(uuid).set(user).then(onSucces);
+        }
+      });
+  }
+
+  static async insertHousehold(name, onSucces) {
+    const user = firebase.auth().currentUser;
 
     db.collection("households")
-      .doc(id)
-      .set({
-        uuid: id,
-        name: name,
-      })
-      .then(function () {
-        const user = firebase.auth().currentUser;
+      .where("name", "==", name)
+      .where("members", "array-contains", user.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 0) {
+          const id = uuid();
+          const user = firebase.auth().currentUser;
+          const household = {
+            uuid: id,
+            name: name,
+            members: [user.uid],
+          };
 
-        const householdRef = db.collection("households").doc(id);
-
-        householdRef
-          .collection("members")
-          .doc(user.uid)
-          .set({ uuid: user.uid, name: user.displayName })
-          .then(() => {
-            householdRef.get().then((doc) => {
-              onSuccesCallback(doc.data());
+          db.collection("households")
+            .doc(id)
+            .set(household)
+            .then(onSucces(household))
+            .catch(function (error) {
+              console.error("Error writing document: ", error);
             });
-          });
-      })
-      .catch(function (error) {
-        console.error("Error writing document: ", error);
+        }
+      });
+  }
+
+  static selectHousehold(name, onSucces) {
+    const user = firebase.auth().currentUser;
+
+    db.collection("households")
+      .where("name", "==", name)
+      .where("members", "array-contains", user.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size !== 0) {
+          snapshot.forEach((doc) => onSucces(doc.data()));
+        }
       });
   }
 }
