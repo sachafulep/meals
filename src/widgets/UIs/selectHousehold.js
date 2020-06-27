@@ -1,6 +1,6 @@
 import React from "react";
-import constants from "../helpers/constants";
-import Database from "../helpers/database";
+import constants from "../../helpers/constants";
+import Database from "../../helpers/database";
 
 const screens = constants.get("screens");
 
@@ -12,7 +12,7 @@ class SelectHousehold extends React.Component {
 
   render() {
     return (
-      <div id="SelectHouseholdDiv">
+      <div id="DivSelectHousehold">
         <input
           id="InputSelectHousehold"
           placeholder="Enter household name"

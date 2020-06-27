@@ -1,12 +1,15 @@
 import React from "react";
 import "./App.css";
-import Splash from "./widgets/splash";
-import SelectHousehold from "./widgets/selectHousehold";
-import CreateHousehold from "./widgets/createHousehold";
-import Home from "./widgets/home";
+import Splash from "./widgets/UIs/splash";
+import SelectHousehold from "./widgets/UIs/selectHousehold";
+import CreateHousehold from "./widgets/UIs/createHousehold";
+import Home from "./widgets/UIs/home";
+import Modal from "./widgets/modal";
+
 import constants from "./helpers/constants";
 
 const screens = constants.get("screens");
+const modals = constants.get("modals");
 
 class App extends React.Component {
   constructor(props) {
@@ -14,6 +17,7 @@ class App extends React.Component {
     this.state = {
       currentScreen: screens.splash,
       currentHousehold: undefined,
+      currentModal: undefined,
     };
   }
 
@@ -26,50 +30,58 @@ class App extends React.Component {
     this.selectScreen(screens.home);
   }
 
-  render() {
+  selectModal(key, params) {
+    this.setState({ currentModal: key });
+  }
+
+  getCurrentPageWidget() {
     switch (this.state.currentScreen) {
       case screens.splash:
         return (
-          <div>
-            <Splash
-              selectScreenCallback={(screen) => this.selectScreen(screen)}
-            />
-          </div>
+          <Splash
+            selectScreenCallback={(screen) => this.selectScreen(screen)}
+          />
         );
 
       case screens.selectHousehold:
         return (
-          <div>
-            <SelectHousehold
-              selectScreenCallback={(screen) => this.selectScreen(screen)}
-              selectHouseholdCallback={(household) =>
-                this.selectHousehold(household)
-              }
-            />
-          </div>
+          <SelectHousehold
+            selectScreenCallback={(screen) => this.selectScreen(screen)}
+            selectHouseholdCallback={(household) =>
+              this.selectHousehold(household)
+            }
+          />
         );
 
       case screens.createHousehold:
         return (
-          <div>
-            <CreateHousehold
-              selectHouseholdCallback={(household) =>
-                this.selectHousehold(household)
-              }
-            />
-          </div>
+          <CreateHousehold
+            selectHouseholdCallback={(household) =>
+              this.selectHousehold(household)
+            }
+          />
         );
 
       case screens.home:
         return (
-          <div>
-            <Home currentHousehold={this.state.currentHousehold} />
-          </div>
+          <Home
+            currentHousehold={this.state.currentHousehold}
+            selectModal={(key, props) => this.selectModal(key, props)}
+          />
         );
 
       default:
         return null;
     }
+  }
+
+  render() {
+    return (
+      <div id="App">
+        {this.getCurrentPageWidget()}
+        <Modal currentModal={this.state.currentModal} />
+      </div>
+    );
   }
 }
 

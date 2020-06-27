@@ -2,8 +2,8 @@ import React from "react";
 import * as firebaseui from "firebaseui";
 import firebase from "firebase/app";
 import "firebase/auth";
-import Database from "../helpers/database";
-import constants from "../helpers/constants";
+import Database from "../../helpers/database";
+import constants from "../../helpers/constants";
 
 const screens = constants.get("screens");
 
@@ -48,7 +48,7 @@ class Splash extends React.Component {
 
   render() {
     return (
-      <div id="SplashDiv">
+      <div id="DivSplash">
         <h1>Meals</h1>
         <div id="firebaseui-auth-container"></div>
         <div id="loader">Loading...</div>

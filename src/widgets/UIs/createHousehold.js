@@ -1,5 +1,5 @@
 import React from "react";
-import Database from "../helpers/database";
+import Database from "../../helpers/database";
 
 class CreateHousehold extends React.Component {
   constructor(props) {
@@ -9,7 +9,7 @@ class CreateHousehold extends React.Component {
 
   render() {
     return (
-      <div id="CreateHouseholdDiv">
+      <div id="DivCreateHousehold">
         <input id="InputCreateHousehold" placeholder="Household name"></input>
         <div>
           <button

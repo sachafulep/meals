@@ -58,6 +58,37 @@ class Database {
         }
       });
   }
+
+  static insertMeal(name, household, context) {
+    const id = uuid();
+    const meal = { id: id, name: name, lastEaten: Date.now() };
+
+    db.collection("households")
+      .doc(household.uuid)
+      .collection("meals")
+      .doc(id)
+      .set(meal)
+      .then(() => {
+        context.state.meals.set(id, meal);
+        context.setState({});
+      });
+  }
+
+  static getMeals(household, context) {
+    const meals = new Map();
+
+    db.collection("households")
+      .doc(household.uuid)
+      .collection("meals")
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          meals.set(doc.data().id, doc.data());
+        });
+
+        context.setState({ meals: meals });
+      });
+  }
 }
 
 export default Database;
